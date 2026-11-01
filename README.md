@@ -1,6 +1,10 @@
 # calculator-ai
 
-An AI-powered calculator built as a **Python FastAPI microservices system**: User can give prompts asking the agent to perform calculations, create custom constants and short scripts and execute them with the help of the agent. It contains a small HTML UI for better visualisation and interaction with the agent. It combines a LangChain/LangGraph conversational agent, a domain service, and an LLM-based service for generating and reviewing custom calculation scripts. The project demonstrates practical Python microservice and AI-agent engineering, along with the key design decisions and trade-offs. (see [How the design evolved](#how-the-design-evolved)).
+https://github.com/user-attachments/assets/667545b8-f340-4338-b728-303fb428ebbb
+
+https://github.com/user-attachments/assets/30e70a40-325c-47bb-b668-c4201a65710c
+
+An AI-powered calculator built as a **Python FastAPI microservices system**: User can give prompts asking the agent to perform calculations, create custom constants and short scripts and execute them with the help of the agent. It contains a small HTML UI for better visualisation and interaction with the agent. It combines a LangChain/LangGraph conversational agent, a domain service, and an LLM-based service for generating and reviewing custom calculation scripts. The project demonstrates practical Python microservice and AI-agent engineering, along with the key design decisions and trade-offs.
 
 ## Tech stack
 
