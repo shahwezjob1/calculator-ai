@@ -1,0 +1,21 @@
+# Postgres data directory (persisted locally via bind mount, never committed)
+calculator-infra/data/
+
+# Environment files
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# langgraph dev artifacts
+.langgraph_api/
+
+# OS / editor
+.DS_Store
+
+*.egg-info/
+

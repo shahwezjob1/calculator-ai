@@ -1,0 +1,27 @@
+{
+    // Postgres dev environment for calculator-ai.
+    // Open with "Dev Containers: Open Folder in Container" on calculator-infra/.
+    // The workspace lands in sql/ — a committed set of inspection queries.
+    "name": "calculator-postgres",
+    // Pinned version. Inside the Equinix network, configure Docker to pull
+    // through the approved registry mirror; for public release this stays
+    // the official pinned tag.
+    "image": "postgres:17.5",
+    // Let the postgres entrypoint run instead of the devcontainer sleep command.
+    "overrideCommand": false,
+    "containerEnv": {
+        // Local-dev-only credentials.
+        "POSTGRES_USER": "calculator",
+        "POSTGRES_PASSWORD": "calculator",
+        "POSTGRES_DB": "calculator"
+    },
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/calculator-infra,type=bind",
+    "workspaceFolder": "/workspaces/calculator-infra/sql",
+    "mounts": [
+        // Data persists across container rebuilds; gitignored.
+        "source=${localWorkspaceFolder}/data,target=/var/lib/postgresql/data,type=bind",
+        // First-boot init scripts (run only when the data dir is empty).
+        "source=${localWorkspaceFolder}/init,target=/docker-entrypoint-initdb.d,type=bind"
+    ],
+    "forwardPorts": [5432]
+}

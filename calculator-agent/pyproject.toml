@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools==84.2.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "calculator-agent"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "python-dotenv>=1.0",
+    "httpx>=0.28",
+    "langchain>=1.3.10",
+    "langchain-core>=1.3.3,<1.7.1",
+    "langchain-google-genai>=2.0",
+    "langgraph-checkpoint-postgres>=2.0",
+    "psycopg[binary]>=3.2",
+    "psycopg-pool>=3.2",
+    # Transitive pins: latest versions quarantined/unavailable in the Equinix Nexus mirror
+    "pydantic==2.14.1",
+    "google-genai==2.33.0",
+    "pyasn1==0.6.4",
+    "langgraph-sdk==0.4.7",
+    "langgraph-checkpoint==4.3.0",
+    "langgraph==1.2.17",
+    "langsmith==0.14.12",
+    "jsonpatch==1.37",
+    "jsonpointer==3.5",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+    "langgraph-cli[inmem]>=0.2",
+    # langgraph-api pinned below the quarantined 0.17.0; it also caps the
+    # OpenTelemetry train (<1.43), keeping it clear of the quarantined 1.45.2
+    "langgraph-api==0.16.5",
+    "langgraph-runtime-inmem==0.36.8",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[[tool.uv.index]]
+name = "equinix-nexus"
+url = "https://nexus.equinix.com/repository/pypi-mirror/simple/"
+default = true

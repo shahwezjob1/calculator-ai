@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculator Agent</title>
+  <style>
+    :root{color-scheme:light;--bg:#f7f8fa;--panel:#fff;--border:#dfe3e8;--text:#17202a;--muted:#667085;--accent:#2563eb;--danger:#b42318;--dangerbg:#fff1f0;--shadow:0 8px 24px rgba(16,24,40,.08)}
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+    button,textarea,input{font:inherit}button{cursor:pointer}.app{display:grid;grid-template-columns:290px minmax(0,1fr);height:100vh;height:100dvh;overflow:hidden}.sidebar{background:#111827;color:#fff;display:flex;flex-direction:column;min-width:0}.brand{padding:18px;border-bottom:1px solid #283244}.brand h1{font-size:16px;margin:0}.brand p{font-size:12px;color:#9ca3af;margin:3px 0 0}.new-thread{margin:14px;border:1px solid #475569;background:#1f2937;color:#fff;border-radius:9px;padding:10px;text-align:left}.new-thread:hover{background:#2b3647}.thread-label{padding:0 16px 8px;color:#9ca3af;font-size:11px;text-transform:uppercase;letter-spacing:.08em}.threads{overflow:auto;padding:0 8px 16px}.thread{width:100%;border:0;background:transparent;color:#d1d5db;border-radius:8px;padding:10px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.thread:hover,.thread.active{background:#263244;color:#fff}.main{min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden}.topbar{height:58px;flex:0 0 58px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:12px}.menu{display:none;border:0;background:transparent;font-size:22px}.title{font-weight:650}.status{margin-left:auto;color:var(--muted);font-size:12px}.chat{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:28px max(18px,calc((100% - 820px)/2));scroll-behavior:smooth}.empty{height:100%;display:grid;place-items:center;text-align:center;color:var(--muted)}.empty strong{display:block;color:var(--text);font-size:22px;margin-bottom:6px}.message{display:flex;margin:0 0 18px}.message.user{justify-content:flex-end}.bubble{max-width:min(78%,680px);padding:11px 14px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere}.assistant .bubble{background:var(--panel);border:1px solid var(--border);border-top-left-radius:4px}.user .bubble{background:var(--accent);color:#fff;border-top-right-radius:4px}.tool .bubble{background:#f3f4f6;color:#475467;border:1px solid #e5e7eb;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}.hitl{background:var(--panel);border:1px solid #f0c36a;border-left:4px solid #f59e0b;border-radius:10px;padding:14px;margin:0 0 18px;box-shadow:var(--shadow)}.hitl h3{font-size:14px;margin:0 0 4px}.hitl p{color:var(--muted);margin:0 0 10px}.args{background:#f8fafc;border:1px solid var(--border);border-radius:7px;padding:9px;margin:8px 0 12px;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow:auto;max-height:220px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--border);background:#fff;border-radius:7px;padding:7px 12px;color:var(--text)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.danger{color:var(--danger);border-color:#f3b0aa;background:var(--dangerbg)}.editor label{display:block;font-size:12px;font-weight:600;margin:10px 0 4px}.editor textarea{width:100%;border:1px solid var(--border);border-radius:7px;padding:8px;background:#fff;color:var(--text);min-height:80px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.composer{flex:0 0 auto;background:var(--panel);border-top:1px solid var(--border);padding:14px max(18px,calc((100% - 820px)/2)) 18px}.compose-box{display:flex;gap:10px;align-items:flex-end;border:1px solid #cbd5e1;border-radius:12px;padding:8px;background:#fff;box-shadow:0 2px 8px rgba(16,24,40,.04)}.compose-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}#prompt{border:0;outline:0;resize:none;flex:1;min-height:38px;max-height:160px;padding:8px;color:var(--text)}#send{border:0;background:var(--accent);color:#fff;border-radius:8px;padding:9px 15px}#send:disabled,.btn:disabled{opacity:.55;cursor:not-allowed}.error{margin:0 0 14px;padding:10px 12px;background:var(--dangerbg);color:var(--danger);border:1px solid #f3b0aa;border-radius:8px}.overlay{display:none}
+    @media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{position:fixed;z-index:20;inset:0 auto 0 0;width:290px;transform:translateX(-100%);transition:.2s}.sidebar.open{transform:none}.menu{display:block}.overlay.show{display:block;position:fixed;z-index:10;inset:0;background:rgba(0,0,0,.35)}.bubble{max-width:90%}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><h1>Calculator Agent</h1><p>FastAPI + LangGraph</p></div>
+    <button class="new-thread" id="newThread" type="button">＋ New conversation</button>
+    <div class="thread-label">Recent threads</div><div class="threads" id="threads"></div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+  <main class="main">
+    <header class="topbar"><button class="menu" id="menu" type="button" aria-label="Open thread drawer">☰</button><div class="title" id="chatTitle">New conversation</div><div class="status" id="status">Ready</div></header>
+    <section class="chat" id="chat"><div class="empty" id="empty"><div><strong>Calculator Agent</strong>Ask a math question, manage constants, or create a reusable calculation.</div></div></section>
+    <footer class="composer"><div class="compose-box"><textarea id="prompt" rows="1" placeholder="Message Calculator Agent"></textarea><button id="send" type="button">Send</button></div></footer>
+  </main>
+</div>
+<script>
+(() => {
+  const API_BASE = 'http://localhost:8000/api/v1/calculator';
+  const $ = id => document.getElementById(id);
+  const state = { threadId: null, pendingAction: null, busy: false };
+    const els = {chat:$('chat'),prompt:$('prompt'),send:$('send'),threads:$('threads'),status:$('status'),title:$('chatTitle'),sidebar:$('sidebar'),overlay:$('overlay')};
+    function resizePrompt(){
+      els.prompt.style.height='auto';
+      els.prompt.style.height=Math.min(160,els.prompt.scrollHeight)+'px';
+    }
+  function setBusy(busy,label='Ready'){state.busy=busy;els.send.disabled=busy||!!state.pendingAction;els.prompt.disabled=busy||!!state.pendingAction;els.status.textContent=busy?'Working…':label}
+function closeDrawer(){els.sidebar.classList.remove('open');els.overlay.classList.remove('show')}
+  function clearChat(){els.chat.innerHTML='<div class="empty" id="empty"><div><strong>Calculator Agent</strong>Ask a math question, manage constants, or create a reusable calculation.</div></div>'}
+  function removeEmpty(){const e=$('empty');if(e)e.remove()}
+  function addMessage(role,content){removeEmpty();const wrap=document.createElement('div');wrap.className='message '+role;const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=content??'';wrap.appendChild(bubble);els.chat.appendChild(wrap);els.chat.scrollTop=els.chat.scrollHeight}
+  function showError(error){removeEmpty();const div=document.createElement('div');div.className='error';div.textContent=error;els.chat.appendChild(div);els.chat.scrollTop=els.chat.scrollHeight}
+  async function api(path,options={}){const res=await fetch(API_BASE+path,{headers:{'Content-Type':'application/json',...(options.headers||{})},...options});if(!res.ok){let msg=`Request failed (${res.status})`;try{const b=await res.json();msg=b.errors?.[0]?.errorMessage||b.detail||msg}catch{}throw new Error(msg)}return res.json()}
+  async function loadThreads(){try{const data=await api('/threads?page=1&size=100');els.threads.innerHTML='';data.threads.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='thread'+(t.threadId===state.threadId?' active':'');b.textContent=t.threadName;b.title=t.threadName;b.onclick=()=>openThread(t);els.threads.appendChild(b)})}catch(e){els.threads.innerHTML='<div style="color:#fca5a5;padding:10px">Could not load threads</div>'}}
+  function renderHistoryMessage(message){
+    if(message.role==='user'||message.role==='human'){addMessage('user',message.content||'');return}
+    if(message.role==='assistant'||message.role==='ai'){addMessage('assistant',message.content||'');return}
+    if(message.role==='tool_call'){
+      const name=message.toolName||message.tool_name||'tool';
+      const args=JSON.stringify(message.args??{},null,2);
+      addMessage('tool',`${name}(${args})`);return
+    }
+    if(message.role==='tool_result'){
+      const name=message.toolName||message.tool_name||'tool';
+      addMessage('tool',`${name} result:\n${message.content||''}`);return
+    }
+    if(message.role==='tool'){addMessage('tool',message.content||'');return}
+  }
+  async function openThread(thread){closeDrawer();state.threadId=thread.threadId;state.pendingAction=null;els.title.textContent=thread.threadName;setBusy(true);try{const data=await api(`/threads/${thread.threadId}/messages`);clearChat();(data.messages||[]).forEach(renderHistoryMessage);setBusy(false);await loadThreads()}catch(e){setBusy(false);showError(e.message)}}
+  function newThread(){closeDrawer();state.threadId=null;state.pendingAction=null;els.title.textContent='New conversation';clearChat();setBusy(false);els.prompt.focus();loadThreads()}
+  async function send(){const message=els.prompt.value.trim();if(!message||state.busy||state.pendingAction)return;els.prompt.value='';addMessage('user',message);setBusy(true);try{const body={message};if(state.threadId)body.threadId=state.threadId;handleResponse(await api('/chat',{method:'POST',body:JSON.stringify(body)}));await loadThreads()}catch(e){setBusy(false);showError(e.message)}}
+  function handleResponse(data){state.threadId=data.threadId;(data.messages||[]).forEach(renderHistoryMessage);if(data.pendingAction){state.pendingAction=data.pendingAction;renderHitl(data.pendingAction);setBusy(false,'Approval required')}else{state.pendingAction=null;if(data.answer)addMessage('assistant',data.answer);setBusy(false)}}
+  function renderHitl(pending){removeEmpty();const box=document.createElement('div');box.className='hitl';box.id='hitlBox';const heading=document.createElement('h3');heading.textContent=pending.actions.length>1?`${pending.actions.length} actions need approval`:'Action needs approval';box.appendChild(heading);const desc=document.createElement('p');desc.textContent='Review the requested action before the agent continues.';box.appendChild(desc);pending.actions.forEach((action,index)=>{const section=document.createElement('section');section.dataset.index=index;const h=document.createElement('h3');h.textContent=action.name;section.appendChild(h);if(action.description){const p=document.createElement('p');p.textContent=action.description;section.appendChild(p)}const pre=document.createElement('div');pre.className='args';pre.textContent=JSON.stringify(action.args,null,2);section.appendChild(pre);box.appendChild(section)});const actions=document.createElement('div');actions.className='actions';for(const [label,cls,fn] of [['Approve','primary',()=>resumeAll('approve')],['Reject','danger',()=>resumeAll('reject')],['Edit','',()=>showEditor(box,pending)]]){const b=document.createElement('button');b.type='button';b.className='btn '+cls;b.textContent=label;b.onclick=fn;actions.appendChild(b)}box.appendChild(actions);els.chat.appendChild(box);els.chat.scrollTop=els.chat.scrollHeight}
+  function showEditor(box,pending){box.innerHTML='<h3>Edit action arguments</h3><p>Change values, then approve. Cancel returns to the original choices.</p>';const forms=[];pending.actions.forEach(action=>{const editor=document.createElement('div');editor.className='editor';const label=document.createElement('label');label.textContent=action.name;const area=document.createElement('textarea');area.rows=Math.min(16,Math.max(5,JSON.stringify(action.args,null,2).split('\n').length));area.value=JSON.stringify(action.args,null,2);editor.append(label,area);box.appendChild(editor);forms.push(area)});const actions=document.createElement('div');actions.className='actions';const approve=document.createElement('button');approve.type='button';approve.className='btn primary';approve.textContent='Approve edited';approve.onclick=()=>{try{resumeEdited(forms.map(a=>JSON.parse(a.value)))}catch{showError('Edited arguments must be valid JSON.')}};const cancel=document.createElement('button');cancel.type='button';cancel.className='btn';cancel.textContent='Cancel';cancel.onclick=()=>{box.remove();renderHitl(pending)};actions.append(approve,cancel);box.appendChild(actions)}
+  async function resumeAll(type){await resume(state.pendingAction.actions.map(()=>({type,...(type==='reject'?{feedback:'The user rejected this action.'}:{})})))}
+  async function resumeEdited(argsList){await resume(argsList.map(args=>({type:'edit',args})))}
+  async function resume(decisions){const box=$('hitlBox');if(box)box.querySelectorAll('button').forEach(b=>b.disabled=true);setBusy(true);try{const data=await api('/chat/resume',{method:'POST',body:JSON.stringify({threadId:state.threadId,decisions})});if(box)box.remove();state.pendingAction=null;handleResponse(data);await loadThreads()}catch(e){setBusy(false,'Approval required');if(box)box.querySelectorAll('button').forEach(b=>b.disabled=false);showError(e.message)}}
+  $('send').onclick=send;$('newThread').onclick=newThread;$('menu').onclick=()=>{els.sidebar.classList.add('open');els.overlay.classList.add('show')};els.overlay.onclick=closeDrawer;els.prompt.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});els.prompt.addEventListener('input',resizePrompt);loadThreads();
+})();
+</script>
+</body>
+</html>
+
